@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SeekhowithRua — Animation Lab</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #04040c; color: #fff; font-family: 'Share Tech Mono', monospace; min-height: 100vh; }
+
+    header {
+      padding: 18px 30px;
+      border-bottom: 1px solid #1a1a3a;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(4,4,20,0.95); position: sticky; top: 0; z-index: 100;
+    }
+    header h1 { font-family: 'Orbitron', sans-serif; font-size: 13px; color: #7f77ff; letter-spacing: 3px; }
+    .badge { background: #1D9E75; color: #000; font-size: 9px; padding: 3px 8px; border-radius: 20px; font-weight: bold; }
+
+    .hero {
+      text-align: center; padding: 60px 20px 40px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(127,119,255,0.08) 0%, transparent 70%);
+    }
+    .hero h2 { font-family: 'Orbitron', sans-serif; font-size: 28px; color: #fff; margin-bottom: 10px; }
+    .hero h2 span { color: #7f77ff; }
+    .hero p { color: #555; font-size: 12px; max-width: 500px; margin: 0 auto 30px; line-height: 1.8; }
+
+    /* Lab grid */
+    .lab-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px; padding: 20px 30px 40px;
+      max-width: 1200px; margin: 0 auto;
+    }
+
+    .lab-card {
+      background: rgba(10,10,30,0.9);
+      border: 1px solid #1a1a3a;
+      border-radius: 14px; overflow: hidden;
+      transition: border-color 0.3s, transform 0.2s;
+      cursor: pointer;
+    }
+    .lab-card:hover { border-color: #7f77ff; transform: translateY(-3px); }
+    .lab-card.active { border-color: #1D9E75; }
+
+    .card-canvas-wrap {
+      width: 100%; height: 200px;
+      background: #060614;
+      position: relative; overflow: hidden;
+    }
+    canvas { width: 100% !important; height: 100% !important; display: block; }
+
+    .card-body { padding: 16px 18px; }
+    .card-tag { font-size: 9px; color: #1D9E75; letter-spacing: 2px; margin-bottom: 6px; }
+    .card-title { font-family: 'Orbitron', sans-serif; font-size: 13px; color: #fff; margin-bottom: 6px; }
+    .card-desc { font-size: 10px; color: #444; line-height: 1.7; }
+    .card-footer { padding: 10px 18px; border-top: 1px solid #0d0d22; display: flex; gap: 8px; }
+    .chip {
+      background: rgba(127,119,255,0.08); border: 1px solid #2a2860;
+      border-radius: 20px; padding: 3px 10px; font-size: 9px; color: #7f77ff;
+    }
+
+    /* Coming soon card */
+    .coming-card {
+      background: rgba(10,10,30,0.5);
+      border: 1px dashed #1a1a3a;
+      border-radius: 14px; padding: 30px 20px;
+      text-align: center; min-height: 280px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .coming-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.3; }
+    .coming-title { font-family: 'Orbitron', sans-serif; font-size: 11px; color: #333; margin-bottom: 6px; }
+    .coming-desc { font-size: 10px; color: #222; }
+
+    footer {
+      text-align: center; padding: 30px;
+      border-top: 1px solid #0d0d22;
+      font-size: 10px; color: #222;
+    }
+    footer a { color: #7f77ff; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>✦ SEEKHOWITHRUA — ANIMATION LAB</h1>
+  <span class="badge">BETA</span>
+</header>
+
+<div class="hero">
+  <h2>Visual <span>Learning</span> Lab</h2>
+  <p>Interactive animated visualizations for networking, algorithms, data structures & more. Built for visual learners.</p>
+</div>
+
+<div class="lab-grid">
+
+  <!-- Card 1: Network Packet Flow -->
+  <div class="lab-card">
+    <div class="card-canvas-wrap">
+      <canvas id="c1"></canvas>
+    </div>
+    <div class="card-body">
+      <div class="card-tag">NETWORKING</div>
+      <div class="card-title">Packet Flow Visualizer</div>
+      <div class="card-desc">Watch data packets travel through routers, switches and firewalls in real time. CCNA concept made visual.</div>
+    </div>
+    <div class="card-footer">
+      <span class="chip">CCNA</span>
+      <span class="chip">TCP/IP</span>
+      <span class="chip">Routing</span>
+    </div>
+  </div>
+
+  <!-- Card 2: Sorting Algorithm -->
+  <div class="lab-card">
+    <div class="card-canvas-wrap">
+      <canvas id="c2"></canvas>
+    </div>
+    <div class="card-body">
+      <div class="card-tag">ALGORITHMS</div>
+      <div class="card-title">Sorting Visualizer</div>
+      <div class="card-desc">See Bubble Sort, Quick Sort and Merge Sort animate live. Understand time complexity visually.</div>
+    </div>
+    <div class="card-footer">
+      <span class="chip">DSA</span>
+      <span class="chip">Python</span>
+      <span class="chip">O(n²)</span>
+    </div>
+  </div>
+
+  <!-- Card 3: Neural Network -->
+  <div class="lab-card">
+    <div class="card-canvas-wrap">
+      <canvas id="c3"></canvas>
+    </div>
+    <div class="card-body">
+      <div class="card-tag">AI / ML</div>
+      <div class="card-title">Neural Network Flow</div>
+      <div class="card-desc">Visualize how data flows through layers of a neural network. Input → Hidden → Output with weights.</div>
+    </div>
+    <div class="card-footer">
+      <span class="chip">Deep Learning</span>
+      <span class="chip">Neurons</span>
+      <span class="chip">Weights</span>
+    </div>
+  </div>
+
+  <!-- Coming Soon Cards -->
+  <div class="coming-card">
+    <div class="coming-icon">🌐</div>
+    <div class="coming-title">OSI MODEL VISUALIZER</div>
+    <div class="coming-desc">7 layers animated · Coming soon</div>
+  </div>
+
+  <div class="coming-card">
+    <div class="coming-icon">🌳</div>
+    <div class="coming-title">BINARY TREE EXPLORER</div>
+    <div class="coming-desc">BST insert / delete / search · Coming soon</div>
+  </div>
+
+  <div class="coming-card">
+    <div class="coming-icon">🔐</div>
+    <div class="coming-title">ENCRYPTION VISUALIZER</div>
+    <div class="coming-desc">RSA / AES animated · Coming soon</div>
+  </div>
+
+</div>
+
+<footer>
+  Part of <a href="https://seekhowithrua.com">SeekhowithRua EdTech</a> ·
+  <a href="https://app.seekhowithrua.com">Launch App</a> ·
+  <a href="https://gaming.seekhowithrua.com">Gaming Lab</a>
+</footer>
+
+<script>
+// ─── CANVAS 1: Packet Flow (Networking) ───
+(function() {
+  const canvas = document.getElementById('c1')
+  const ctx = canvas.getContext('2d')
+  canvas.width = canvas.offsetWidth * devicePixelRatio
+  canvas.height = canvas.offsetHeight * devicePixelRatio
+  ctx.scale(devicePixelRatio, devicePixelRatio)
+  const W = canvas.offsetWidth, H = canvas.offsetHeight
+
+  const nodes = [
+    { x: 40,  y: H/2, label: 'PC',      color: '#7f77ff' },
+    { x: W*0.3, y: H/2, label: 'Router', color: '#1D9E75' },
+    { x: W*0.6, y: H/2, label: 'Switch', color: '#1D9E75' },
+    { x: W-40, y: H/2, label: 'Server', color: '#f59e0b' },
+  ]
+
+  let packets = []
+  let t = 0
+
+  function spawnPacket() {
+    packets.push({ progress: 0, seg: 0, color: `hsl(${Math.random()*60+200},80%,65%)`, size: 5 + Math.random()*3 })
+  }
+
+  function drawNode(n) {
+    ctx.beginPath()
+    ctx.arc(n.x, n.y, 14, 0, Math.PI*2)
+    ctx.fillStyle = n.color + '22'
+    ctx.fill()
+    ctx.strokeStyle = n.color
+    ctx.lineWidth = 1.5
+    ctx.stroke()
+    ctx.fillStyle = n.color
+    ctx.font = `bold 8px Share Tech Mono, monospace`
+    ctx.textAlign = 'center'
+    ctx.fillText(n.label, n.x, n.y + 26)
+  }
+
+  function drawLine(a, b) {
+    ctx.beginPath()
+    ctx.moveTo(a.x, a.y)
+    ctx.lineTo(b.x, b.y)
+    ctx.strokeStyle = '#1a1a3a'
+    ctx.lineWidth = 1.5
+    ctx.stroke()
+  }
+
+  function animate() {
+    requestAnimationFrame(animate)
+    ctx.clearRect(0, 0, W, H)
+
+    // Lines
+    for (let i = 0; i < nodes.length - 1; i++) drawLine(nodes[i], nodes[i+1])
+    // Nodes
+    nodes.forEach(drawNode)
+
+    // Packets
+    packets = packets.filter(p => p.seg < nodes.length - 1)
+    packets.forEach(p => {
+      const a = nodes[p.seg], b = nodes[p.seg + 1]
+      const x = a.x + (b.x - a.x) * p.progress
+      const y = a.y + (b.y - a.y) * p.progress
+
+      ctx.beginPath()
+      ctx.arc(x, y, p.size, 0, Math.PI*2)
+      ctx.fillStyle = p.color
+      ctx.shadowColor = p.color
+      ctx.shadowBlur = 10
+      ctx.fill()
+      ctx.shadowBlur = 0
+
+      p.progress += 0.018
+      if (p.progress >= 1) { p.progress = 0; p.seg++ }
+    })
+
+    t++
+    if (t % 50 === 0) spawnPacket()
+  }
+
+  spawnPacket()
+  animate()
+})()
+
+// ─── CANVAS 2: Sorting Visualizer ───
+(function() {
+  const canvas = document.getElementById('c2')
+  const ctx = canvas.getContext('2d')
+  canvas.width = canvas.offsetWidth * devicePixelRatio
+  canvas.height = canvas.offsetHeight * devicePixelRatio
+  ctx.scale(devicePixelRatio, devicePixelRatio)
+  const W = canvas.offsetWidth, H = canvas.offsetHeight
+
+  let arr = Array.from({length: 20}, () => Math.random() * 0.8 + 0.1)
+  let i = 0, j = 0, sorted = false
+  let comparing = []
+
+  function bubbleStep() {
+    if (sorted) { arr = Array.from({length: 20}, () => Math.random() * 0.8 + 0.1); sorted = false; i = 0; j = 0; return }
+    if (i >= arr.length - 1) { sorted = true; return }
+    if (j >= arr.length - 1 - i) { i++; j = 0; return }
+    comparing = [j, j+1]
+    if (arr[j] > arr[j+1]) { [arr[j], arr[j+1]] = [arr[j+1], arr[j]] }
+    j++
+  }
+
+  function draw() {
+    requestAnimationFrame(draw)
+    ctx.clearRect(0, 0, W, H)
+    const bw = W / arr.length
+    arr.forEach((v, idx) => {
+      const isComp = comparing.includes(idx)
+      ctx.fillStyle = isComp ? '#7f77ff' : (sorted ? '#1D9E75' : '#1a1a3a')
+      if (isComp) { ctx.shadowColor = '#7f77ff'; ctx.shadowBlur = 8 }
+      const bh = v * (H - 20)
+      ctx.fillRect(idx * bw + 1, H - bh, bw - 2, bh)
+      ctx.shadowBlur = 0
+    })
+    bubbleStep()
+  }
+  draw()
+})()
+
+// ─── CANVAS 3: Neural Network ───
+(function() {
+  const canvas = document.getElementById('c3')
+  const ctx = canvas.getContext('2d')
+  canvas.width = canvas.offsetWidth * devicePixelRatio
+  canvas.height = canvas.offsetHeight * devicePixelRatio
+  ctx.scale(devicePixelRatio, devicePixelRatio)
+  const W = canvas.offsetWidth, H = canvas.offsetHeight
+
+  const layers = [3, 5, 4, 2]
+  const layerX = layers.map((_, i) => W * (i + 1) / (layers.length + 1))
+
+  function nodePos(li, ni) {
+    const count = layers[li]
+    return { x: layerX[li], y: H * (ni + 1) / (count + 1) }
+  }
+
+  let pulses = []
+  let t = 0
+
+  function spawnPulse() {
+    const li = Math.floor(Math.random() * (layers.length - 1))
+    const ni = Math.floor(Math.random() * layers[li])
+    const ni2 = Math.floor(Math.random() * layers[li + 1])
+    pulses.push({ li, ni, ni2, progress: 0, color: `hsl(${Math.random()*60+220},80%,65%)` })
+  }
+
+  function draw() {
+    requestAnimationFrame(draw)
+    ctx.clearRect(0, 0, W, H)
+
+    // Connections
+    layers.forEach((count, li) => {
+      if (li >= layers.length - 1) return
+      for (let ni = 0; ni < count; ni++) {
+        for (let ni2 = 0; ni2 < layers[li+1]; ni2++) {
+          const a = nodePos(li, ni), b = nodePos(li+1, ni2)
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y)
+          ctx.strokeStyle = '#0d0d22'; ctx.lineWidth = 1; ctx.stroke()
+        }
+      }
+    })
+
+    // Nodes
+    layers.forEach((count, li) => {
+      for (let ni = 0; ni < count; ni++) {
+        const { x, y } = nodePos(li, ni)
+        ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI*2)
+        const colors = ['#7f77ff','#1D9E75','#f59e0b','#ef4444']
+        ctx.fillStyle = colors[li] + '33'
+        ctx.fill()
+        ctx.strokeStyle = colors[li]; ctx.lineWidth = 1.5; ctx.stroke()
+      }
+    })
+
+    // Pulses
+    pulses = pulses.filter(p => p.progress <= 1)
+    pulses.forEach(p => {
+      const a = nodePos(p.li, p.ni), b = nodePos(p.li+1, p.ni2)
+      const x = a.x + (b.x - a.x) * p.progress
+      const y = a.y + (b.y - a.y) * p.progress
+      ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI*2)
+      ctx.fillStyle = p.color
+      ctx.shadowColor = p.color; ctx.shadowBlur = 10; ctx.fill(); ctx.shadowBlur = 0
+      p.progress += 0.025
+    })
+
+    t++
+    if (t % 30 === 0) spawnPulse()
+  }
+  draw()
+})()
+</script>
+</body>
+</html>
