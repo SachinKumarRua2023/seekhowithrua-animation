@@ -1,75 +1,23 @@
 // SeekhoWithRua Animation Lab Authentication Handler
-// Handles cross-domain login from main app (app.seekhowithrua.com)
+// Uses shared COSMOS_AUTH from cosmos-auth.js
 
-const TOKEN_KEY = 'cosmos_auth_token';
-const USER_KEY = 'cosmos_user';
+const TOKEN_KEY = COSMOS_AUTH.TOKEN_KEY;
+const USER_KEY = COSMOS_AUTH.USER_KEY;
 const ANIMATION_WATCH_KEY = 'cosmos_animation_watch';
-
-// Check URL for token from main app login
-function checkUrlForToken() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get('token');
-  const userData = urlParams.get('user');
-  
-  if (token && userData) {
-    try {
-      const user = JSON.parse(decodeURIComponent(userData));
-      
-      // Save to localStorage
-      localStorage.setItem(TOKEN_KEY, token);
-      localStorage.setItem(USER_KEY, JSON.stringify(user));
-      
-      // Clean URL
-      window.history.replaceState({}, document.title, window.location.pathname);
-      
-      console.log('Animation Lab: Logged in via cross-domain token');
-      return true;
-    } catch (err) {
-      console.error('Failed to parse user data:', err);
-    }
-  }
-  return false;
-}
 
 // Check if user is authenticated
 function checkAuth() {
-  // First check URL for token (from redirect after login)
-  if (checkUrlForToken()) {
-    return true;
-  }
-  
-  // Then check localStorage
-  const token = localStorage.getItem(TOKEN_KEY);
-  const user = localStorage.getItem(USER_KEY);
-  
-  if (token && user) {
-    try {
-      const userData = JSON.parse(user);
-      return true;
-    } catch (err) {
-      console.error('Invalid user data in storage');
-      logout();
-    }
-  }
-  return false;
+  return COSMOS_AUTH.isAuthenticated();
 }
 
 // Get current user
 function getCurrentUser() {
-  const user = localStorage.getItem(USER_KEY);
-  if (user) {
-    try {
-      return JSON.parse(user);
-    } catch (err) {
-      return null;
-    }
-  }
-  return null;
+  return COSMOS_AUTH.getUser();
 }
 
 // Get auth token
 function getToken() {
-  return localStorage.getItem(TOKEN_KEY);
+  return COSMOS_AUTH.getToken();
 }
 
 // Get user's display name
@@ -175,15 +123,13 @@ function closeLoginModal() {
 
 // Logout
 function logout() {
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(USER_KEY);
-  window.location.reload();
+  COSMOS_AUTH.logout();
 }
 
 // Redirect to main app login
 function redirectToLogin() {
   const currentUrl = encodeURIComponent(window.location.href);
-  window.location.href = `https://app.seekhowithrua.com/login?redirect=${currentUrl}`;
+  COSMOS_AUTH.redirectToLogin(currentUrl);
 }
 
 // Update UI based on auth state

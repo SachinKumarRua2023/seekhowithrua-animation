@@ -5,17 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SeekhowithRua — Animation Lab</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <script src="../js/cosmos-auth.js"></script>
+  <script src="js/auth.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #04040c; color: #fff; font-family: 'Share Tech Mono', monospace; min-height: 100vh; }
 
     header {
-      padding: 18px 30px;
+      padding: 15px 30px;
       border-bottom: 1px solid #1a1a3a;
       display: flex; align-items: center; justify-content: space-between;
       background: rgba(4,4,20,0.95); position: sticky; top: 0; z-index: 100;
     }
-    header h1 { font-family: 'Orbitron', sans-serif; font-size: 13px; color: #7f77ff; letter-spacing: 3px; }
+    .logo {
+      font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700;
+      background: linear-gradient(135deg, #7f77ff, #00d4ff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .logo span { color: #9E9BFF; -webkit-text-fill-color: #9E9BFF; }
+    nav { display: flex; align-items: center; gap: 15px; }
+    nav a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 12px; font-weight: 500; transition: color 0.3s; white-space: nowrap; }
+    nav a:hover { color: #7f77ff; }
+    .user-section { display: flex; align-items: center; gap: 10px; }
     .badge { background: #1D9E75; color: #000; font-size: 9px; padding: 3px 8px; border-radius: 20px; font-weight: bold; }
 
     .hero {
@@ -85,8 +97,19 @@
 <body>
 
 <header>
-  <h1>✦ SEEKHOWITHRUA — ANIMATION LAB</h1>
-  <span class="badge">BETA</span>
+  <div class="logo">SEEKHO<span>WITHRUA</span></div>
+  <nav>
+    <a href="https://seekhowithrua.com">Home</a>
+    <a href="https://lms.seekhowithrua.com">LMS</a>
+    <a href="https://gaming.seekhowithrua.com">Gaming Lab</a>
+    <a href="https://aiagent.seekhowithrua.com">AI Agent</a>
+    <a href="https://webbuilder.seekhowithrua.com">Web Builder</a>
+    <a href="https://appbuilder.seekhowithrua.com">App Builder</a>
+    <a href="https://animationlab.seekhowithrua.com" style="color: #f39c12;">Animation Lab</a>
+  </nav>
+  <div id="userSection" class="user-section">
+    <!-- Auth UI injected by auth.js -->
+  </div>
 </header>
 
 <div class="hero">
@@ -97,7 +120,7 @@
 <div class="lab-grid">
 
   <!-- Card 1: Network Packet Flow -->
-  <div class="lab-card">
+  <div class="lab-card" data-animation="packet-flow" onclick="viewAnimation('packet-flow')">
     <div class="card-canvas-wrap">
       <canvas id="c1"></canvas>
     </div>
@@ -114,7 +137,7 @@
   </div>
 
   <!-- Card 2: Sorting Algorithm -->
-  <div class="lab-card">
+  <div class="lab-card" data-animation="sorting" onclick="viewAnimation('sorting')">
     <div class="card-canvas-wrap">
       <canvas id="c2"></canvas>
     </div>
@@ -131,7 +154,7 @@
   </div>
 
   <!-- Card 3: Neural Network -->
-  <div class="lab-card">
+  <div class="lab-card" data-animation="neural-network" onclick="viewAnimation('neural-network')">
     <div class="card-canvas-wrap">
       <canvas id="c3"></canvas>
     </div>
@@ -368,6 +391,41 @@
   }
   draw()
 })()
+
+// ─── View Animation Handler with Auth Check ───
+function viewAnimation(animationId) {
+  // Check if user is logged in
+  if (typeof animationAuth !== 'undefined' && animationAuth.checkAuth()) {
+    // User is logged in, start tracking and show animation detail
+    animationAuth.startWatchTracking(animationId);
+    showAnimationDetail(animationId);
+  } else {
+    // Show login required modal
+    if (typeof animationAuth !== 'undefined') {
+      animationAuth.showLoginRequiredModal('Please login to view animations and track your learning time!');
+    } else {
+      alert('Please login to view animations. Redirecting to login...');
+      window.location.href = 'https://app.seekhowithrua.com/login?redirect=' + encodeURIComponent(window.location.href);
+    }
+  }
+}
+
+// Show animation detail view (placeholder - expand as needed)
+function showAnimationDetail(animationId) {
+  const animationNames = {
+    'packet-flow': 'Packet Flow Visualizer',
+    'sorting': 'Sorting Visualizer',
+    'neural-network': 'Neural Network Flow'
+  };
+  
+  console.log('Viewing animation:', animationNames[animationId]);
+  
+  // Add active class to the card
+  document.querySelectorAll('.lab-card').forEach(card => {
+    card.classList.remove('active');
+  });
+  document.querySelector(`[data-animation="${animationId}"]`)?.classList.add('active');
+}
 </script>
 </body>
 </html>
